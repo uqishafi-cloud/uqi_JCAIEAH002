@@ -1,1 +1,2 @@
-# uqi_JCAIEAH002
+# Uqi's Capstone Project
+# Syauqi Hisyam Shafiyullah - Purwadhika JCAIEAH 002
