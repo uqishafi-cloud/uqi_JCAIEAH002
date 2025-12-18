@@ -6,12 +6,19 @@ Dengan memprediksi CLV secara akurat, perusahaan dapat mengidentifikasi segmen p
 ## Business Understanding
 
 ### Latar Belakang Masalah
-Dalam industri asuransi, tidak semua pelanggan memberikan profitabilitas yang sama. Perusahaan seringkali menghabiskan biaya promosi yang sama untuk semua pelanggan tanpa mengetahui potensi nilai jangka panjang mereka. Hal ini menyebabkan inefisiensi anggaran marketing dan risiko kehilangan pelanggan prioritas (*High-Value Customers*).
+Perusahaan saat ini memiliki kesulitan dalam menentukan strategi marketing dan retensi yang tepat sasaran karena belum memiliki metode otomatis untuk memprediksi nilai masa depan (future value) dari seorang pelanggan.
+
+Jika perusahaan memperlakukan semua pelanggan secara sama:
+
+- Risiko Kehilangan Pelanggan Premium: Pelanggan bernilai tinggi mungkin pindah ke kompetitor karena kurangnya insentif atau penawaran khusus.
+- Inefisiensi Biaya: Perusahaan mungkin membuang anggaran marketing untuk mempertahankan pelanggan yang sebenarnya merugikan (klaim tinggi, CLV rendah).
+
+Oleh karena itu, perusahaan membutuhkan sebuah model Machine Learning yang dapat memprediksi nilai Customer Lifetime Value berdasarkan profil dan riwayat polis pelanggan.
 
 ### Tujuan Proyek
-1.  **Memprediksi CLV:** Membuat model yang mampu memprediksi total nilai uang pelanggan dengan tingkat kesalahan (Error) di bawah 10%.
-2.  **Identifikasi Faktor Kunci:** Mengetahui fitur apa yang paling mempengaruhi tinggi/rendahnya CLV.
-3.  **Strategi Bisnis:** Memberikan rekomendasi berbasis data (*Actionable Insights*) kepada tim Marketing.
+1.  Membangun model Regresi yang akurat untuk memprediksi angka Customer Lifetime Value (CLV) dari setiap pelanggan.
+2.  Mengetahui faktor-faktor atau fitur apa saja yang paling mempengaruhi tinggi rendahnya CLV seorang pelanggan.
+3.  Memberikan wawasan bisnis kepada tim marketing untuk merancang strategi promosi yang lebih efektif berdasarkan segmen nilai pelanggan.
 
 ---
 
