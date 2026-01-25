@@ -54,7 +54,7 @@ def get_system_prompt_template():
 @tool
 def search_resume(query: str, user_role: str):
     """Mencari kandidat berdasarkan POSISI/JABATAN."""
-    if user_role.lower().strip() not in ["hr", "manager", "admin", "vp"]:
+    if user_role.lower().strip() not in ["hr", "manager", "admin"]:
         return "AKSES DITOLAK."
     try:
         store = get_vector_store()
@@ -65,7 +65,7 @@ def search_resume(query: str, user_role: str):
 @tool
 def search_by_skill(skill_query: str, user_role: str):
     """Mencari kandidat berdasarkan SKILL TEKNIS."""
-    if user_role.lower().strip() not in ["hr", "manager", "admin", "vp"]:
+    if user_role.lower().strip() not in ["hr", "manager", "admin"]:
         return "AKSES DITOLAK."
     try:
         store = get_vector_store()
