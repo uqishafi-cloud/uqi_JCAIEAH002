@@ -8,34 +8,28 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from langfuse import Langfuse
-from langfuse.callback import CallbackHandler
+from langfuse.langchain import CallbackHandler
 
-# 1. LOAD ENV & GLOBAL CONFIGURATION (Eager Loading)
 load_dotenv(find_dotenv())
 
-# Init Langfuse Global
 lf = Langfuse()
+langfuse_handler = CallbackHandler()
 
-# Init Qdrant Client (Global)
 qdrant_client = QdrantClient(
     url=os.getenv("QDRANT_URL"),
     api_key=os.getenv("QDRANT_API_KEY"),
 )
 
-# Init Embeddings (Global)
 embeddings = OpenAIEmbeddings(
-    model=os.getenv("EMBEDDING_MODEL", "text-embedding-3-small"),
+    model=os.getenv("EMBEDDING_MODEL"),
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
-# Init LLM (Global)
 model = ChatOpenAI(
-    model=os.getenv("LLM_MODEL", "gpt-3.5-turbo"),
+    model=os.getenv("LLM_MODEL"),
     openai_api_key=os.getenv("OPENAI_API_KEY"),
     temperature=0
 )
-
-# --- HELPER FUNCTIONS ---
 
 def get_vector_store():
     """Mengambil instance Vector Store menggunakan client global."""
@@ -56,7 +50,7 @@ def get_system_prompt():
         return prompt.get_langchain_prompt()
     except Exception:
         # Fallback Prompt (Jika di cloud belum setup)
-        print("⚠️ Prompt 'hr_supervisor' tidak ditemukan di Langfuse. Menggunakan Default.")
+        print("Prompt 'hr_supervisor' tidak ditemukan di Langfuse. Menggunakan Default.")
         return ChatPromptTemplate.from_messages([
             ("system", """
              Anda adalah HR Assistant Professional & Supervisor.
@@ -71,8 +65,6 @@ def get_system_prompt():
             ("placeholder", "{agent_scratchpad}"),
         ])
 
-# --- DEFINISI TOOLS (DENGAN INTEGRASI RBAC) ---
-
 @tool
 def search_resume(query: str, user_role: str):
     """
@@ -82,12 +74,11 @@ def search_resume(query: str, user_role: str):
     # 1. Security Check
     allowed_roles = ["hr", "manager", "admin", "vp"]
     if user_role.lower().strip() not in allowed_roles:
-        return "⛔ AKSES DITOLAK: Maaf, role Anda tidak memiliki izin untuk melihat data resume kandidat."
+        return "AKSES DITOLAK: Maaf, role Anda tidak memiliki izin untuk melihat data resume kandidat."
 
     # 2. Logic Pencarian
     try:
         vector_store = get_vector_store()
-        # Ambil agak banyak (k=5) agar AI punya banyak konteks
         docs = vector_store.similarity_search(query, k=5)
         
         if not docs:
@@ -95,7 +86,6 @@ def search_resume(query: str, user_role: str):
             
         results = []
         for idx, doc in enumerate(docs):
-            # Format output agar mudah dibaca LLM
             info = f"Kandidat #{idx+1} (ID: {doc.metadata.get('ID', 'N/A')}): {doc.page_content[:500]}..."
             results.append(info)
             
@@ -103,6 +93,28 @@ def search_resume(query: str, user_role: str):
         
     except Exception as e:
         return f"Terjadi kesalahan pada database Qdrant: {e}"
+    
+@tool
+def search_by_skill(skill_query: str):
+    """
+    Gunakan tool ini KHUSUS untuk mencari kandidat berdasarkan SKILL TEKNIS / HARD SKILL.
+    Contoh: "Kandidat yang jago Python", "Bisa SQL dan Tableau", "Skill Analysis".
+    """
+    try:
+        store = get_vector_store()
+        docs = store.similarity_search(skill_query, k=5)
+        
+        results = []
+        for idx, doc in enumerate(docs):
+            info = f"""
+            Kandidat #{idx+1} [ID: {doc.metadata.get('ID', 'N/A')}]
+            Category: {doc.metadata.get('Category', 'N/A')}
+            Cuplikan Resume: {doc.page_content[:600]}...
+            """
+            results.append(info)
+            
+        return "\n".join(results)
+    except Exception as e: return f"Error DB: {e}"
 
 @tool
 def estimasi_gaji(experience_year: int, role_target: str, user_role: str):
@@ -110,14 +122,12 @@ def estimasi_gaji(experience_year: int, role_target: str, user_role: str):
     Gunakan tool ini untuk MENGHITUNG ESTIMASI GAJI (Salary Range).
     Hanya untuk HR/Manager.
     """
-    # 1. Security Check
     if user_role.lower().strip() not in ["hr", "manager", "admin"]:
-        return "⛔ MAAF: Informasi sensitif mengenai gaji hanya dapat diakses oleh HR atau Manager."
+        return "MAAF: Informasi sensitif mengenai gaji hanya dapat diakses oleh HR atau Manager."
 
-    # 2. Logic Perhitungan (Simulasi)
     try:
-        base_salary = 5_000_000  # Gaji dasar
-        exp_multiplier = 1_500_000 # Kenaikan per tahun
+        base_salary = 5_000_000
+        exp_multiplier = 1_500_000
         
         role_bonus = 0
         if "manager" in role_target.lower(): role_bonus = 10_000_000
@@ -127,7 +137,7 @@ def estimasi_gaji(experience_year: int, role_target: str, user_role: str):
         est_bawah = base_salary + (experience_year * exp_multiplier) + role_bonus
         est_atas = est_bawah * 1.3 # Range 30%
         
-        return f"💰 Kalkulasi Sistem untuk {role_target} ({experience_year} thn): Rp {est_bawah:,.0f} - Rp {est_atas:,.0f}"
+        return f"Kalkulasi Sistem untuk {role_target} ({experience_year} thn): Rp {est_bawah:,.0f} - Rp {est_atas:,.0f}"
     except Exception as e:
         return f"Error kalkulasi: {e}"
 
@@ -149,14 +159,10 @@ def get_agent_executor():
     """
     Fungsi utama yang dipanggil oleh app.py untuk menjalankan Agent.
     """
-    # 1. Kumpulkan semua tools
     tools = [search_resume, estimasi_gaji, generate_pertanyaan_interview]
     
-    # 2. Ambil Prompt (Cloud / Default)
     prompt = get_system_prompt()
     
-    # 3. Rakit Agent
     agent = create_tool_calling_agent(model, tools, prompt)
     
-    # 4. Return Executor
     return AgentExecutor(agent=agent, tools=tools, verbose=True)
