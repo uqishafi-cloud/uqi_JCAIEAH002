@@ -8,7 +8,9 @@ from qdrant_client import QdrantClient
 from langgraph import create_react_agent
 
 from langfuse import Langfuse
-from langfuse.langchain import CallbackHandler 
+from langfuse.langchain import CallbackHandler
+from pydantic import BaseModel, Field
+from typing import Literal 
 
 # --- ENV & CLIENT SETUP ---
 load_dotenv(find_dotenv())
