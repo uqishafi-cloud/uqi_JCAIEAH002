@@ -56,13 +56,13 @@ Agent ini dilengkapi dengan 4 kemampuan (tools) spesifik:
 
 1.  **`search_resume`** 🔒 *(Restricted)*
     * Mencari kandidat berdasarkan **Posisi/Jabatan** (Contoh: "Cari Marketing Manager").
-    * Hanya untuk: HR, Manager, VP.
+    * Hanya untuk: HR, Manager
 2.  **`search_by_skill`** 🔒 *(Restricted)*
     * Mencari kandidat berdasarkan **Skill Teknis** (Contoh: "Cari yang bisa Python & SQL").
-    * Hanya untuk: HR, Manager, VP.
+    * Hanya untuk: HR, Manager
 3.  **`estimasi_gaji`** 🔒 *(Restricted)*
     * Menghitung estimasi gaji berdasarkan tahun pengalaman.
-    * Hanya untuk: HR, Manager, VP.
+    * Hanya untuk: HR, Manager
 4.  **`generate_pertanyaan_interview`** 🌍 *(Public)*
     * Membuat daftar pertanyaan interview yang sulit/tricky.
     * Bisa diakses oleh **SEMUA ROLE** (termasuk Intern).

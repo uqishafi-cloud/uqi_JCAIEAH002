@@ -13,10 +13,5 @@
     "name": "Andre (Manager)",
     "password": "123",
     "role": "Manager"
-  },
-  "tyson": {
-    "name": "tyson (Tech)",
-    "password": "root",
-    "role": "Admin"
   }
 }
