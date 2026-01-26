@@ -1,0 +1,10 @@
+streamlit
+langchain
+langchain-openai
+langchain-community
+langchain-core
+langchain-qdrant
+qdrant-client
+langgraph
+python-dotenv
+pydantic==2.9.2
