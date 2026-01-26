@@ -48,7 +48,7 @@ def get_system_prompt_template():
 @tool
 def search_resume(query: str, user_role: str):
     """Mencari kandidat berdasarkan POSISI/JABATAN."""
-    if user_role.lower().strip() not in ["hr", "manager", "admin", "vp"]:
+    if user_role.lower().strip() not in ["hr", "manager"]:
         return "AKSES DITOLAK. Informasi hanya untuk HR/Manager"
     try:
         store = get_vector_store()
@@ -59,7 +59,7 @@ def search_resume(query: str, user_role: str):
 @tool
 def search_by_skill(skill_query: str, user_role: str):
     """Mencari kandidat berdasarkan SKILL TEKNIS."""
-    if user_role.lower().strip() not in ["hr", "manager", "admin", "vp"]:
+    if user_role.lower().strip() not in ["hr", "manager"]:
         return "AKSES DITOLAK. Informasi hanya untuk HR/Manager"
     try:
         store = get_vector_store()
@@ -70,7 +70,7 @@ def search_by_skill(skill_query: str, user_role: str):
 @tool
 def estimasi_gaji(experience_year: int, role_target: str, user_role: str):
     """Menghitung estimasi gaji."""
-    if user_role.lower().strip() not in ["hr", "manager", "admin", "vp"]:
+    if user_role.lower().strip() not in ["hr", "manager"]:
         return "AKSES DITOLAK. Informasi hanya untuk HR/Manager"
     try:
         base = 5_000_000 + (experience_year * 1_500_000)
