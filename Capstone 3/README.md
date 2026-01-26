@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
-![LangGraph](https://img.shields.io/badge/AI%20Agent-LangGraph-orange)
+![LangChain](https://img.shields.io/badge/AI%20Agent-LangChain-orange)
 ![Qdrant](https://img.shields.io/badge/Vector%20DB-Qdrant-green)
 
 **Smart HR AI Assistant** adalah aplikasi Chatbot cerdas yang dirancang untuk membantu tim Human Resources (HR) dalam mempercepat proses rekrutmen. Aplikasi ini bukan sekadar "Tanya Jawab", melainkan sebuah **Agent** yang dapat mengambil tindakan (mencari resume, menghitung gaji) dengan lapisan keamanan **Role-Based Access Control (RBAC)** yang ketat.
@@ -11,7 +11,7 @@
 
 ## 📌 1. Intisari Project
 
-Project ini membangun sebuah **AI Agent** menggunakan framework **LangGraph** yang terintegrasi dengan **Streamlit** sebagai antarmuka pengguna.
+Project ini membangun sebuah **AI Agent** menggunakan framework **LangChain** yang terintegrasi dengan **Streamlit** sebagai antarmuka pengguna.
 
 Fitur Utama:
 * **Semantic Resume Search (RAG):** Mencari kandidat bukan hanya berdasarkan keyword, tapi berdasarkan konteks skill (menggunakan Vector Database Qdrant).
@@ -41,7 +41,7 @@ Sistem ini bekerja dengan alur sebagai berikut:
 
 1.  **User Login:** User masuk via Streamlit. Sistem mengidentifikasi **Role** user (misal: `Manager` atau `Intern`).
 2.  **Context Injection:** Saat User chatting, sistem menyisipkan informasi Role ke dalam prompt backend secara tersembunyi (`[SYSTEM INFO: User Role is Manager]`).
-3.  **LangGraph Agent:**
+3.  **LangChain Agent:**
     * Agent menerima pesan + info role.
     * Agent memilih **Tool** yang tepat.
 4.  **Security Check:** Di dalam Tool, terdapat logika validasi: `if user_role not in ['HR', 'Manager']`. Jika tidak valid, tool menolak memberikan data.
