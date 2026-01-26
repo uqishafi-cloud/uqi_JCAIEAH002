@@ -1,4 +1,4 @@
-# 🔐 Smart HR AI Assistant (Enterprise Grade)
+# 🔐 Smart HR AI Assistant
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
