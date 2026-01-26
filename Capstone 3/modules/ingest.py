@@ -13,8 +13,8 @@ load_dotenv(find_dotenv())
 
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME", "resume_collection")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
 
 def ingest_data():
     print("Memulai proses Ingest Data Resume...")

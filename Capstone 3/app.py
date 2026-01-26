@@ -1,10 +1,9 @@
 import streamlit as st
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 
-# [PENTING] Matikan import ini jika masih error langfuse/pydantic
 from langfuse.langchain import CallbackHandler 
 
-from modules.auth import authenticate
+from modules.auth import authenticate 
 from modules.agent import supervisor_agent as agent
 
 # --- KONFIGURASI HALAMAN ---
@@ -25,11 +24,9 @@ if "authenticated" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
-# ==========================================
-# 1. HALAMAN LOGIN (Security Layer)
-# ==========================================
+#--------- LOGIN ---------
 if not st.session_state["authenticated"]:
-    st.markdown("<h1 style='text-align: center;'>🔐 HR System Login</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>🔐 Smart HR Assistant</h1>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -51,13 +48,10 @@ if not st.session_state["authenticated"]:
     with st.expander("ℹ️ Info Akun Demo"):
         st.markdown("""
         - **HR:** `uqi` / `admin`
-        - **VP:** `diandra` / `vp`
-        - **Intern:** `siti` / `123`
+        - **Intern:** `herman` / `123`
         """)
 
-# ==========================================
-# 2. HALAMAN UTAMA (Chatbot + Fitur Canggih)
-# ==========================================
+#---------HALAMAN UTAMA ---------
 else:
     curr_user = st.session_state["user_info"]
     user_name = curr_user['name']
@@ -66,7 +60,7 @@ else:
     # --- SIDEBAR ---
     with st.sidebar:
         st.title("User Profile")
-        st.write(f"👤 **Nama:** {user_name}")
+        st.write(f"👤 {user_name}")
         st.info(f"🏷️ **Role:** {user_role}")
         if st.button("🚪 Log Out", use_container_width=True):
             st.session_state["authenticated"] = False
@@ -76,7 +70,7 @@ else:
 
     # --- HEADER ---
     st.title("🤖 Smart HR Assistant")
-    st.caption(f"Logged in as **{user_role}**. Cost Tracking Active.")
+    st.caption(f"Logged in as **{user_role}**.")
 
     # --- DISPLAY HISTORY ---
     for msg in st.session_state.messages:
@@ -86,13 +80,11 @@ else:
     # --- INPUT USER ---
     if prompt := st.chat_input("Ketik perintah Anda..."):
         
-        # 1. Tampilkan Input User
         with st.chat_message("user"):
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
         
-        # 2. Siapkan Context (RBAC Injection)
-        # Convert format dict ke object LangChain agar Agent tidak bingung
+        # SIAPKAN PAYLOAD
         history_buffer = []
         for m in st.session_state.messages[-10:]:
             if m["role"] == "user":
@@ -100,26 +92,23 @@ else:
             else:
                 history_buffer.append(AIMessage(content=m["content"]))
 
-        # [CRITICAL] Inject Role User agar Tool Security berfungsi
         final_prompt = f"{prompt}\n\n[SYSTEM INFO: Current User Role is '{user_role}']"
         input_payload = {"messages": history_buffer + [HumanMessage(content=final_prompt)]}
 
-        # 3. Proses di Backend
+        # PROSES DI BACKEND
         with st.chat_message("assistant"):
             with st.spinner("Sedang memproses..."):
                 try:
-                    # [OPSIONAL] Langfuse Callback (Jika sudah fix env-nya)
                     lf_handler = CallbackHandler(session_id=f"sess-{user_name}", user_id=user_name)
                     
-                    # Invoke Agent
                     result = agent.invoke(
-                        input_payload, config={"callbacks": [lf_handler]} 
+                        input_payload,
+                        config={"callbacks": [lf_handler]} 
                     )
                     
-                    # --- EXTRAK DATA CANGGIH (Dari Code Referensi) ---
+                    # --- EXTRAK DATA ---
                     answer = result["messages"][-1].content
                     
-                    # A. Hitung Token
                     total_input_tokens = 0
                     total_output_tokens = 0
                     tool_calls_view = []
@@ -135,26 +124,19 @@ else:
                                 total_input_tokens += meta["usage_metadata"].get("input_tokens", 0)
                                 total_output_tokens += meta["usage_metadata"].get("output_tokens", 0)
                         
-                        # Ambil Tool Outputs
                         if isinstance(message, ToolMessage):
                             tool_calls_view.append(f"🔧 Tool Output: {message.content}")
 
-                    # B. Hitung Estimasi Harga (Asumsi rate OpenAI standar)
-                    # Rumus kasar: (Input * 0.15 + Output * 0.6) * Kurs / 1 Juta
                     price = 17_000 * (total_input_tokens * 0.15 + total_output_tokens * 0.6) / 1_000_000
 
-                    # 4. Tampilkan Hasil
                     st.markdown(answer)
                     st.session_state.messages.append({"role": "assistant", "content": answer})
 
-                    # 5. Tampilkan Detail Teknis (Expander)
                     with st.expander("📊 Statistik & Debug"):
                         st.write(f"**Estimasi Biaya:** Rp {price:,.2f}")
                         st.write(f"**Tokens:** Input ({total_input_tokens}) + Output ({total_output_tokens})")
-                        
                         if tool_calls_view:
-                            st.write("---")
-                            st.write("**Aktivitas Tool:**")
+                            st.divider()
                             for t in tool_calls_view:
                                 st.code(t)
 

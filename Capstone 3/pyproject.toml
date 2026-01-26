@@ -1,5 +1,5 @@
 [project]
-name = "agent-st"
+name = "agent"
 version = "0.1.0"
 description = ""
 authors = [
@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "agent_st", from = "src"}]
+packages = [{include = "agent", from = "modules"}]
 
 
 [build-system]
