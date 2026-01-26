@@ -5,7 +5,7 @@
 ![LangChain](https://img.shields.io/badge/AI%20Agent-LangChain-orange)
 ![Qdrant](https://img.shields.io/badge/Vector%20DB-Qdrant-green)
 
-**Smart HR AI Assistant** adalah aplikasi Chatbot cerdas yang dirancang untuk membantu tim Human Resources (HR) dalam mempercepat proses rekrutmen. Aplikasi ini bukan sekadar "Tanya Jawab", melainkan sebuah **Agent** yang dapat mengambil tindakan (mencari resume, menghitung gaji) dengan lapisan keamanan **Role-Based Access Control (RBAC)** yang ketat.
+**Smart HR AI Assistant** adalah aplikasi Chatbot cerdas yang dirancang untuk membantu tim Human Resources (HR) dalam mempercepat proses rekrutmen. Aplikasi ini bukan sekadar "Tanya Jawab", melainkan sebuah **Agent** yang dapat mengambil tindakan (mencari resume, menghitung gaji, membuat pertanyaan interview) dengan lapisan keamanan **Role-Based Access Control (RBAC)** yang ketat.
 
 ---
 
